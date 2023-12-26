@@ -4,13 +4,13 @@ const otpSchema = new mongoose.Schema({
   code: String,
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Reference to the User model
+    ref: "User",
     unique: true,
   },
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 60, // OTP expires after 60 seconds (600 seconds)
+    expires: 60,
   },
 });
 

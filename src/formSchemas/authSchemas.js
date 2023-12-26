@@ -1,5 +1,5 @@
 const yup = require("yup");
-const { EMAIL_REGX, PASSWORD_REGX } = require("./regex");
+const { EMAIL_REGX, PASSWORD_REGX, OTP_REGX } = require("./regex");
 
 const registerSchema = yup.object().shape({
   email: yup
@@ -18,6 +18,20 @@ const registerSchema = yup.object().shape({
   lastName: yup.string().required(),
 });
 
+const verifyOTPSchema = yup.object().shape({
+  _id: yup
+    .string()
+    .required("Id is not provided"),
+  otp: yup
+    .string()
+    .required("otp is required")
+    .matches(
+      OTP_REGX,
+      "OTP must be exactly 6 digits long and contain only numeric values"
+    ),
+});
+
 module.exports = {
   registerSchema,
+  verifyOTPSchema,
 };
