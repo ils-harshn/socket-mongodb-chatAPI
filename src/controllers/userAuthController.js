@@ -58,6 +58,7 @@ const userAuthController = {
           user.isVerifed = true;
           await user.save();
           await OTP.deleteOne({ user: userId });
+          emailService.sendEmailVerifiedNotification(user);
           res.json({
             _id: user._id,
             email: user.email,

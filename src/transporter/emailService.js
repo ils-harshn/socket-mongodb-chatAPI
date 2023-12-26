@@ -29,6 +29,15 @@ const emailService = {
     };
     return transporter.sendMail(mailOptions);
   },
+  sendEmailVerifiedNotification: (user) => {
+    const mailOptions = {
+      from: "harshverma790932611@gmail.com",
+      to: user.email,
+      subject: "Account Verified (TEST CHAT APP)",
+      html: `<h1>${user.email} (VERIFIED)</h1><p>Raise a complaint if it was not you!</p>`,
+    };
+    return transporter.sendMail(mailOptions);
+  },
 };
 
 module.exports = emailService;
