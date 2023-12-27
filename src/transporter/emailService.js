@@ -38,6 +38,15 @@ const emailService = {
     };
     return transporter.sendMail(mailOptions);
   },
+  sendNewLoginFoundNotification: (user) => {
+    const mailOptions = {
+      from: "harshverma790932611@gmail.com",
+      to: user.email,
+      subject: "New Login Found (TEST CHAT APP)",
+      html: `<h1>:${user.firstName} ${user.lastName}</h1><p>New login found for your account</p><p>Raise a complaint if it was not you!</p>`,
+    };
+    return transporter.sendMail(mailOptions);
+  },
 };
 
 module.exports = emailService;

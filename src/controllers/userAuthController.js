@@ -16,6 +16,7 @@ const User = require("../models/User");
 const emailService = require("../transporter/emailService");
 const { mongoose } = require("mongoose");
 const serverConfig = require("../../config");
+const Token = require("../models/Token");
 
 const userAuthController = {
   register: async (req, res) => {
@@ -46,7 +47,7 @@ const userAuthController = {
         firstName: savedUser.firstName,
         lastName: savedUser.lastName,
         isVerifed: savedUser.isVerifed,
-        otp_timeout: serverConfig.OTP_TIMEOUT
+        otp_timeout: serverConfig.OTP_TIMEOUT,
       });
     } catch (error) {
       res.status(404).json({
@@ -117,10 +118,25 @@ const userAuthController = {
             .status(404)
             .json({ status: "error", message: "Invalid credentials" });
         } else {
+          let token = await Token.findOne({
+            user: user._id,
+          });
+
+          if (token === null) {
+            token = generateToken(user._id.toString());
+            const newToken = new Token({
+              token,
+              user: user._id,
+            });
+            await newToken.save();
+          } else {
+            token = token.token;
+          }
+          emailService.sendNewLoginFoundNotification(user);
           res.json({
             _id: encryptUserId(user._id),
             email: user.email,
-            token: generateToken(user._id.toString()),
+            token,
           });
         }
       }
@@ -152,7 +168,7 @@ const userAuthController = {
           firstName: user.firstName,
           lastName: user.lastName,
           isVerifed: user.isVerifed,
-          otp_timeout: serverConfig.OTP_TIMEOUT, 
+          otp_timeout: serverConfig.OTP_TIMEOUT,
         });
       } else {
         res
