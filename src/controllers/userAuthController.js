@@ -5,7 +5,6 @@ const {
 const { generateOTP, encryptUserId, decryptUserId } = require("../helpers");
 const OTP = require("../models/OTP");
 const User = require("../models/User");
-const bcrypt = require("bcrypt");
 const emailService = require("../transporter/emailService");
 const { mongoose } = require("mongoose");
 
@@ -15,10 +14,9 @@ const userAuthController = {
       await registerSchema.validate(req.body);
       const { email, password, firstName, lastName } = req.body;
 
-      const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = new User({
         email,
-        password: hashedPassword,
+        password,
         firstName,
         lastName,
       });
@@ -61,7 +59,7 @@ const userAuthController = {
           await OTP.deleteOne({ user: userId });
           emailService.sendEmailVerifiedNotification(user);
           res.json({
-            _id: _id,
+            _id: encryptedID,
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,

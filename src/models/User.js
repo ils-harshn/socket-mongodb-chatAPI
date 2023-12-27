@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const { ValidateEmail, ValidatePassword } = require("./Validators");
+const serverConfig = require("../../config");
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -14,6 +16,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+    set: function (password) {
+      const hashedPassword = bcrypt.hashSync(password, serverConfig.SALT_ROUND);
+      return hashedPassword;
+    },
   },
   firstName: {
     type: String,
