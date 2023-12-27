@@ -39,7 +39,7 @@ const userAuthController = {
         isVerifed: savedUser.isVerifed,
       });
     } catch (error) {
-      res.status(404).json({ status: "Error", error });
+      res.status(404).json({ status: "error", error });
     }
   },
   verifyOTP: async (req, res) => {
@@ -50,7 +50,9 @@ const userAuthController = {
       const userId = new mongoose.Types.ObjectId(_id);
       const otp = await OTP.findOne({ user: userId });
       if (otp === null)
-        res.status(404).json({ error: "OTP Expired or not found" });
+        res
+          .status(404)
+          .json({ status: "error", message: "OTP Expired or not found" });
       else {
         if (receviedOTP === otp.code) {
           const user = await User.findById(userId);
@@ -66,11 +68,15 @@ const userAuthController = {
             isVerifed: user.isVerifed,
           });
         } else {
-          res.status(404).json({ status: "Wrong OTP provided" });
+          res
+            .status(404)
+            .json({ status: "error", message: "Wrong OTP provided" });
         }
       }
     } catch (error) {
-      res.status(404).json({ status: "Error", error });
+      res
+        .status(404)
+        .json({ status: "error", error, message: "User not found" });
     }
   },
 };
