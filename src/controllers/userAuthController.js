@@ -2,7 +2,7 @@ const {
   registerSchema,
   verifyOTPSchema,
 } = require("../formSchemas/authSchemas");
-const { generateOTP } = require("../helpers");
+const { generateOTP, encryptUserId, decryptUserId } = require("../helpers");
 const OTP = require("../models/OTP");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
@@ -34,7 +34,7 @@ const userAuthController = {
       await newOTP.save();
       emailService.sendEmailVerificationOTP(savedUser, newOTP.code);
       res.json({
-        _id: savedUser._id,
+        _id: encryptUserId(savedUser._id),
         email: savedUser.email,
         firstName: savedUser.firstName,
         lastName: savedUser.lastName,
@@ -47,7 +47,8 @@ const userAuthController = {
   verifyOTP: async (req, res) => {
     try {
       await verifyOTPSchema.validate(req.body);
-      const { _id, otp: receviedOTP } = req.body;
+      const { _id: encryptedID, otp: receviedOTP } = req.body;
+      const _id = decryptUserId(encryptedID);
       const userId = new mongoose.Types.ObjectId(_id);
       const otp = await OTP.findOne({ user: userId });
       if (otp === null)
@@ -60,7 +61,7 @@ const userAuthController = {
           await OTP.deleteOne({ user: userId });
           emailService.sendEmailVerifiedNotification(user);
           res.json({
-            _id: user._id,
+            _id: _id,
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
