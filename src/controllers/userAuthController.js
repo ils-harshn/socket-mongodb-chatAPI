@@ -2,6 +2,7 @@ const {
   registerSchema,
   verifyOTPSchema,
   loginSchema,
+  resendOTPSchema,
 } = require("../formSchemas/authSchemas");
 const {
   generateOTP,
@@ -125,6 +126,41 @@ const userAuthController = {
       res
         .status(404)
         .json({ status: "error", message: "Email or password is wrong" });
+    }
+  },
+  resendOTP: async (req, res) => {
+    try {
+      await resendOTPSchema.validate(req.body);
+      const { email } = req.body;
+      const user = await User.findOne({
+        email,
+      });
+      if (user) {
+        const otpCode = generateOTP();
+        const newOTP = new OTP({
+          code: otpCode,
+          user: user._id,
+        });
+
+        await newOTP.save();
+        emailService.sendEmailVerificationOTP(user, newOTP.code);
+        res.json({
+          _id: encryptUserId(user._id),
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          isVerifed: user.isVerifed,
+        });
+      } else {
+        res
+          .status(404)
+          .json({ status: "error", message: "No email address found" });
+      }
+    } catch (error) {
+      res.status(404).json({
+        status: "error",
+        message: "Only one OTP at a time for a user",
+      });
     }
   },
 };

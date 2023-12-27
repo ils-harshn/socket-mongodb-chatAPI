@@ -44,8 +44,17 @@ const loginSchema = yup.object().shape({
     .required("Password is required"),
 });
 
+const resendOTPSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Invalid email format")
+    .matches(EMAIL_REGX, "Invalid email format")
+    .required("Email is required"),
+})
+
 module.exports = {
   registerSchema,
   verifyOTPSchema,
   loginSchema,
+  resendOTPSchema,
 };
