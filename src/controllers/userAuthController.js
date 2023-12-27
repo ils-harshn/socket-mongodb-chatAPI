@@ -3,6 +3,7 @@ const {
   verifyOTPSchema,
   loginSchema,
   resendOTPSchema,
+  logoutFromAllDeviceSchema,
 } = require("../formSchemas/authSchemas");
 const {
   generateOTP,
@@ -179,6 +180,35 @@ const userAuthController = {
       res.status(404).json({
         status: "error",
         message: "Only one OTP at a time for a user",
+      });
+    }
+  },
+  logoutFromAllDevice: async (req, res) => {
+    try {
+      const authorData = {
+        _id: req.headers["user-id"],
+      };
+      await logoutFromAllDeviceSchema.validate(authorData);
+      const _id = decryptUserId(authorData._id);
+      const userId = new mongoose.Types.ObjectId(_id);
+      const deleted = await Token.findOneAndDelete({
+        user: userId,
+      });
+      if (deleted === null) {
+        res
+          .status(404)
+          .json({ status: "error", message: "Already logged out" });
+      } else {
+        const user = await User.findOne({ _id: userId });
+        emailService.sendAllDeviceLoggedOutNotification(user);
+        res.json({
+          status: "logged out",
+        });
+      }
+    } catch (error) {
+      res.status(404).json({
+        status: "error",
+        message: "No user found or already logged out from all device",
       });
     }
   },

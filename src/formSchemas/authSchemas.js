@@ -29,6 +29,10 @@ const verifyOTPSchema = yup.object().shape({
     ),
 });
 
+const logoutFromAllDeviceSchema = yup.object().shape({
+  _id: yup.string().required("Id is not provided"),
+});
+
 const loginSchema = yup.object().shape({
   email: yup
     .string()
@@ -50,11 +54,12 @@ const resendOTPSchema = yup.object().shape({
     .email("Invalid email format")
     .matches(EMAIL_REGX, "Invalid email format")
     .required("Email is required"),
-})
+});
 
 module.exports = {
   registerSchema,
   verifyOTPSchema,
   loginSchema,
   resendOTPSchema,
+  logoutFromAllDeviceSchema,
 };

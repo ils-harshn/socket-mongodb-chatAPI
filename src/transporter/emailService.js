@@ -47,6 +47,15 @@ const emailService = {
     };
     return transporter.sendMail(mailOptions);
   },
+  sendAllDeviceLoggedOutNotification: (user) => {
+    const mailOptions = {
+      from: "harshverma790932611@gmail.com",
+      to: user.email,
+      subject: "Logged for all device (TEST CHAT APP)",
+      html: `<h1>:${user.firstName} ${user.lastName}</h1><p>You have logged from all device.</p><p>Raise a complaint if it was not you!</p>`,
+    };
+    return transporter.sendMail(mailOptions);
+  },
 };
 
 module.exports = emailService;
