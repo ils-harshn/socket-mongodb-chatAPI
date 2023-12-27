@@ -39,13 +39,21 @@ const userAuthController = {
         isVerifed: savedUser.isVerifed,
       });
     } catch (error) {
-      res.status(404).json({ status: "error", error, message: "email already exists or data not sent properly" });
+      res.status(404).json({
+        status: "error",
+        error,
+        message: "email already exists or data not sent properly",
+      });
     }
   },
   verifyOTP: async (req, res) => {
     try {
-      await verifyOTPSchema.validate(req.body);
-      const { _id: encryptedID, otp: receviedOTP } = req.body;
+      const authorData = {
+        _id: req.headers["user-id"],
+        otp: req.body.otp,
+      };
+      await verifyOTPSchema.validate(authorData);
+      const { _id: encryptedID, otp: receviedOTP } = authorData;
       const _id = decryptUserId(encryptedID);
       const userId = new mongoose.Types.ObjectId(_id);
       const otp = await OTP.findOne({ user: userId });
@@ -78,6 +86,11 @@ const userAuthController = {
         .status(404)
         .json({ status: "error", error, message: "User not found" });
     }
+  },
+  login: async (req, res) => {
+    res.json({
+      status: "working",
+    });
   },
 };
 
