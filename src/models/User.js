@@ -9,7 +9,17 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validate: {
-      validator: ValidateEmail,
+      validator: async function (email) {
+        if (!ValidateEmail(email)) return false;
+        const user = await this.constructor.findOne({ email });
+        if (user) {
+          if (this.id === user.id) {
+            return true;
+          }
+          return false;
+        }
+        return true;
+      },
       message: (props) => `${props.value} is not a valid email address!`,
     },
   },

@@ -1,8 +1,15 @@
 const {
   registerSchema,
   verifyOTPSchema,
+  loginSchema,
 } = require("../formSchemas/authSchemas");
-const { generateOTP, encryptUserId, decryptUserId } = require("../helpers");
+const {
+  generateOTP,
+  encryptUserId,
+  decryptUserId,
+  generateToken,
+} = require("../helpers");
+const bcrypt = require("bcrypt");
 const OTP = require("../models/OTP");
 const User = require("../models/User");
 const emailService = require("../transporter/emailService");
@@ -88,9 +95,37 @@ const userAuthController = {
     }
   },
   login: async (req, res) => {
-    res.json({
-      status: "working",
-    });
+    try {
+      await loginSchema.validate(req.body);
+      const { email, password } = req.body;
+      const user = await User.findOne({
+        email: email,
+      });
+      if (!user) {
+        res
+          .status(404)
+          .json({ status: "error", message: "Invalid credentials" });
+      } else if (user.isVerifed === false) {
+        res.status(404).json({ status: "error", message: "User is inactive" });
+      } else {
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+          res
+            .status(404)
+            .json({ status: "error", message: "Invalid credentials" });
+        } else {
+          res.json({
+            _id: encryptUserId(user._id),
+            email: user.email,
+            token: generateToken(user._id.toString()),
+          });
+        }
+      }
+    } catch (error) {
+      res
+        .status(404)
+        .json({ status: "error", message: "Email or password is wrong" });
+    }
   },
 };
 

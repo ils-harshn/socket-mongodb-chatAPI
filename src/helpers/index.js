@@ -20,8 +20,19 @@ const decryptUserId = (encryptedUserId) => {
   return decryptedUserId;
 };
 
+const generateToken = (userId) => {
+  // Create a token using a combination of user ID and a timestamp
+  const timestamp = Date.now().toString();
+  const token = CryptoJS.HmacSHA256(
+    userId + timestamp,
+    serverConfig.SECRET_KEY
+  ).toString(CryptoJS.enc.Base64);
+  return token;
+};
+
 module.exports = {
   generateOTP,
   encryptUserId,
   decryptUserId,
+  generateToken,
 };

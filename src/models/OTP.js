@@ -6,6 +6,11 @@ const otpSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     unique: true,
+    validate: async function (userId) {
+      const existingOtp = await this.constructor.findOne({ user: userId });
+      return !existingOtp;
+    },
+    message: "Only one OTP allowed per user.",
   },
   createdAt: {
     type: Date,
