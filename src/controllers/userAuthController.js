@@ -15,6 +15,7 @@ const OTP = require("../models/OTP");
 const User = require("../models/User");
 const emailService = require("../transporter/emailService");
 const { mongoose } = require("mongoose");
+const serverConfig = require("../../config");
 
 const userAuthController = {
   register: async (req, res) => {
@@ -45,6 +46,7 @@ const userAuthController = {
         firstName: savedUser.firstName,
         lastName: savedUser.lastName,
         isVerifed: savedUser.isVerifed,
+        otp_timeout: serverConfig.OTP_TIMEOUT
       });
     } catch (error) {
       res.status(404).json({
@@ -150,6 +152,7 @@ const userAuthController = {
           firstName: user.firstName,
           lastName: user.lastName,
           isVerifed: user.isVerifed,
+          otp_timeout: serverConfig.OTP_TIMEOUT, 
         });
       } else {
         res
