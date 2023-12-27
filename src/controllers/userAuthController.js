@@ -39,7 +39,7 @@ const userAuthController = {
         isVerifed: savedUser.isVerifed,
       });
     } catch (error) {
-      res.status(404).json({ status: "error", error });
+      res.status(404).json({ status: "error", error, message: "email already exists or data not sent properly" });
     }
   },
   verifyOTP: async (req, res) => {
