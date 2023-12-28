@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const serverConfig = {
+  ALLOWED_ORIGINS: ["http://localhost:3000"],
   PORT: process.env.PORT,
   MONGO_URI: process.env.MONGO_URI,
   EMAIL_PASS: process.env.EMAIL_PASS,

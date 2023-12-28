@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const mongoose = require("mongoose");
 
 const userRouter = require("./src/routers/userRouter");
@@ -22,6 +23,11 @@ const server = http.createServer(app);
 const V1Router = express.Router();
 V1Router.use("/user", userRouter);
 
+app.use(
+  cors({
+    origin: serverConfig.ALLOWED_ORIGINS,
+  })
+);
 app.use(bodyParser.json());
 app.use("/api/v1", V1Router);
 
