@@ -7,5 +7,6 @@ userRouter.post("/verifyOTP", userAuthController.verifyOTP);
 userRouter.post("/login", userAuthController.login);
 userRouter.post("/resendOTP", userAuthController.resendOTP);
 userRouter.post("/logoutFromAllDevice", userAuthController.logoutFromAllDevice);
+userRouter.post("/verifyUserToken", userAuthController.verifyUserToken);
 
 module.exports = userRouter;

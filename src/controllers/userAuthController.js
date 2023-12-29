@@ -4,6 +4,7 @@ const {
   loginSchema,
   resendOTPSchema,
   logoutFromAllDeviceSchema,
+  verifyUserTokenSchema,
 } = require("../formSchemas/authSchemas");
 const {
   generateOTP,
@@ -172,12 +173,10 @@ const userAuthController = {
           otp_timeout: serverConfig.OTP_TIMEOUT,
         });
       } else {
-        res
-          .status(404)
-          .json({
-            status: "error",
-            message: "No email address found to activate!",
-          });
+        res.status(404).json({
+          status: "error",
+          message: "No email address found to activate!",
+        });
       }
     } catch (error) {
       res.status(404).json({
@@ -213,6 +212,30 @@ const userAuthController = {
         status: "error",
         message: "No user found or already logged out from all device",
       });
+    }
+  },
+  verifyUserToken: async (req, res) => {
+    try {
+      const authorData = {
+        _id: req.headers["user-id"],
+        token: req.headers["user-token"],
+        email: req.headers["user-email"],
+      };
+      await verifyUserTokenSchema.validate(authorData);
+      const userId = new mongoose.Types.ObjectId(decryptUserId(authorData._id));
+      const user = await User.findById(userId);
+      if (!user || user.email !== authorData.email) {
+        res.status(404).json({ status: "error", message: "Invalid Token" });
+      } else {
+        const token = await Token.findOne({ user: userId });
+        if (token && token.token === authorData.token) {
+          res.json({ status: "successfull authorization" });
+        } else {
+          res.status(404).json({ status: "error", message: "Invalid Token" });
+        }
+      }
+    } catch (error) {
+      res.status(404).json({ status: "error", message: "Invalid request" });
     }
   },
 };

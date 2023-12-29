@@ -56,10 +56,21 @@ const resendOTPSchema = yup.object().shape({
     .required("Email is required"),
 });
 
+const verifyUserTokenSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Invalid email format")
+    .matches(EMAIL_REGX, "Invalid email format")
+    .required("Email is required"),
+  token: yup.string().required(),
+  _id: yup.string().required(),
+});
+
 module.exports = {
   registerSchema,
   verifyOTPSchema,
   loginSchema,
   resendOTPSchema,
   logoutFromAllDeviceSchema,
+  verifyUserTokenSchema,
 };
