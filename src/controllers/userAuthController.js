@@ -154,7 +154,7 @@ const userAuthController = {
       const user = await User.findOne({
         email,
       });
-      if (user) {
+      if (user && !user.isVerifed) {
         const otpCode = generateOTP();
         const newOTP = new OTP({
           code: otpCode,
@@ -174,7 +174,10 @@ const userAuthController = {
       } else {
         res
           .status(404)
-          .json({ status: "error", message: "No email address found" });
+          .json({
+            status: "error",
+            message: "No email address found to activate!",
+          });
       }
     } catch (error) {
       res.status(404).json({
