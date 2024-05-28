@@ -55,7 +55,7 @@ const userAuthController = {
       res.status(404).json({
         status: "error",
         error,
-        message: "email already exists or data not sent properly",
+        message: "Email already exists",
       });
     }
   },

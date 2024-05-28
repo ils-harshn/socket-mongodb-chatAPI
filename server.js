@@ -19,6 +19,9 @@ mongoose
 
 const app = express();
 const server = http.createServer(app);
+const versions = {
+  v1: "/api/v1",
+};
 
 const V1Router = express.Router();
 V1Router.use("/user", userRouter);
@@ -29,7 +32,7 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-app.use("/api/v1", V1Router);
+app.use(versions.v1, V1Router);
 
 const PORT = serverConfig.PORT;
 server.listen(PORT, () => {
