@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const serverConfig = {
-  ALLOWED_ORIGINS: ["http://localhost:3000"],
+  ALLOWED_ORIGINS: ["http://localhost:3000", "https://chatapp-42.netlify.app"],
   PORT: process.env.PORT,
   MONGO_URI: process.env.MONGO_URI,
   EMAIL_PASS: process.env.EMAIL_PASS,
