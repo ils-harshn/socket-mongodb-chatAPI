@@ -1,5 +1,7 @@
 const { channelCreateSchema } = require("../formSchemas/channelFormSchemas");
 const Channel = require("../models/Channel");
+const MemberRoles = require("../models/Consts/MemberRoles");
+const Member = require("../models/Members");
 
 const channelController = {
   create: async (req, res) => {
@@ -14,10 +16,20 @@ const channelController = {
       });
 
       const savedChannel = await newChannel.save();
+      const newMember = new Member({
+        memberName: savedChannel.adminName,
+        channelId: savedChannel._id,
+        userId: req.user._id,
+        role: MemberRoles.ADMIN,
+      });
+
+      await newMember.save();
+
       res.json({
         _id: savedChannel._id,
         name: savedChannel.name,
         description: savedChannel.description,
+        adminName: savedChannel.adminName,
       });
     } catch (error) {
       res.status(404).json({
