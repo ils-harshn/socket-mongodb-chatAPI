@@ -18,8 +18,8 @@ const channelController = {
       const savedChannel = await newChannel.save();
       const newMember = new Member({
         memberName: savedChannel.adminName,
-        channelId: savedChannel._id,
-        userId: req.user._id,
+        channel: savedChannel._id,
+        user: req.user._id,
         role: MemberRoles.ADMIN,
       });
 
@@ -32,6 +32,20 @@ const channelController = {
         adminName: savedChannel.adminName,
       });
     } catch (error) {
+      res.status(404).json({
+        status: "error",
+        error,
+      });
+    }
+  },
+  list: async (req, res) => {
+    try {
+      const memberChannels = await Member.find({
+        user: req.user._id,
+      }).populate("channel");
+      res.json(memberChannels);
+    } catch (error) {
+      console.log(error);
       res.status(404).json({
         status: "error",
         error,
