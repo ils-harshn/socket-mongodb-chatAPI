@@ -229,7 +229,13 @@ const userAuthController = {
       } else {
         const token = await Token.findOne({ user: userId });
         if (token && token.token === authorData.token) {
-          res.json({ status: "successfull authorization" });
+          res.json({
+            _id: user._id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            isVerifed: user.isVerifed,
+          });
         } else {
           res.status(404).json({ status: "error", message: "Invalid Token" });
         }
