@@ -6,6 +6,6 @@ const channelRouter = express.Router();
 channelRouter.use(authMiddleware.isLoggedIn);
 
 channelRouter.post("/create", channelController.create);
-channelRouter.post("/list", channelController.list);
+channelRouter.get("/list", channelController.list);
 
 module.exports = channelRouter;
