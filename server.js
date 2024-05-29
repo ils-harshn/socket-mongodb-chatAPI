@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const userRouter = require("./src/routers/userRouter");
 const serverConfig = require("./config");
+const channelRouter = require("./src/routers/channelRouter");
 
 mongoose
   .connect(serverConfig.MONGO_URI)
@@ -25,6 +26,7 @@ const versions = {
 
 const V1Router = express.Router();
 V1Router.use("/user", userRouter);
+V1Router.use("/channel", channelRouter);
 
 app.use(
   cors({
