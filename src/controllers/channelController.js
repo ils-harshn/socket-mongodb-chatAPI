@@ -42,7 +42,9 @@ const channelController = {
     try {
       const memberChannels = await Member.find({
         user: req.user._id,
-      }).populate("channel");
+      })
+        .populate("channel")
+        .sort({ _id: -1 });
       res.json(memberChannels);
     } catch (error) {
       console.log(error);
