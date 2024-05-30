@@ -44,7 +44,7 @@ const channelController = {
         user: req.user._id,
       })
         .populate("channel")
-        .sort({ _id: -1 });
+        .sort({ createdAt: -1 });
       res.json(memberChannels);
     } catch (error) {
       console.log(error);
