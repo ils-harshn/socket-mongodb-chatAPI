@@ -4,6 +4,7 @@ const User = require("../../models/User");
 const Token = require("../../models/Token");
 const { decryptUserId } = require("../../helpers");
 const Member = require("../../models/Members");
+const Channel = require("../../models/Channel");
 
 const authChannelMiddleware = async (socket, next) => {
   const token = socket.handshake.auth.token;
@@ -30,6 +31,13 @@ const authChannelMiddleware = async (socket, next) => {
             channel: channelId,
           });
           if (member) {
+            socket.user = {
+              _id: user._id,
+              email: user.email,
+              name: member.memberName,
+              role: member.role,
+            };
+            socket.channel = await Channel.findById(channelId);
             next();
           } else {
             next(
