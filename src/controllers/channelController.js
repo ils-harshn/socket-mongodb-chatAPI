@@ -47,7 +47,6 @@ const channelController = {
         .sort({ createdAt: -1 });
       res.json(memberChannels);
     } catch (error) {
-      console.log(error);
       res.status(404).json({
         status: "error",
         error,

@@ -1,11 +1,10 @@
-function initChannelSocket(io) {
-  io.of(/^\/channel-\w+$/).on("connection", (socket) => {
-    console.log(socket.id, socket.nsp.name.split("-")[1]);
+const authChannelMiddleware = require("../middlewares/socket/authChannelMiddleware");
 
-    setTimeout(() => {
-      socket.emit("connected");
-    }, 2000);
-  });
+function initChannelSocket(io) {
+  const dynamicNamespace = io
+    .of(/^\/channel-\w+$/)
+    .use(authChannelMiddleware)
+    .on("connection", (socket) => {});
 }
 
 module.exports = initChannelSocket;
