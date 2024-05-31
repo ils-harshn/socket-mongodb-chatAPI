@@ -1,5 +1,6 @@
 const express = require("express");
 const http = require("http");
+const socketIo = require("socket.io");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -7,6 +8,7 @@ const mongoose = require("mongoose");
 const userRouter = require("./src/routers/userRouter");
 const serverConfig = require("./config");
 const channelRouter = require("./src/routers/channelRouter");
+const initChannelSocket = require("./src/sockets/channelSocket");
 
 mongoose
   .connect(serverConfig.MONGO_URI)
@@ -20,6 +22,15 @@ mongoose
 
 const app = express();
 const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+initChannelSocket(io);
+
 const versions = {
   v1: "/api/v1",
 };
