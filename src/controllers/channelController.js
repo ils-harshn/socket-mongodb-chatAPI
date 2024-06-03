@@ -1,7 +1,10 @@
 const { channelCreateSchema } = require("../formSchemas/channelFormSchemas");
 const Channel = require("../models/Channel");
 const MemberRoles = require("../models/Consts/MemberRoles");
+const SpaceMemberRoles = require("../models/Consts/SpaceMemberRoles");
 const Member = require("../models/Members");
+const Space = require("../models/Space");
+const SpaceMember = require("../models/SpaceMember");
 
 const channelController = {
   create: async (req, res) => {
@@ -24,6 +27,23 @@ const channelController = {
       });
 
       await newMember.save();
+
+      const general = await Space({
+        name: "general",
+        description: channelDescription,
+        channel: newChannel._id,
+        adminId: req.user._id,
+      });
+
+      await general.save();
+
+      const spaceMember = await SpaceMember({
+        space: general._id,
+        member: newMember._id,
+        role: SpaceMemberRoles.ADMIN,
+      });
+
+      await spaceMember.save();
 
       res.json({
         _id: savedChannel._id,
