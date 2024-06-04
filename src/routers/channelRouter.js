@@ -7,5 +7,6 @@ channelRouter.use(authMiddleware.isLoggedIn);
 
 channelRouter.post("/create", channelController.create);
 channelRouter.get("/list", channelController.list);
+channelRouter.post("/invite/:channelId", channelController.invite);
 
 module.exports = channelRouter;

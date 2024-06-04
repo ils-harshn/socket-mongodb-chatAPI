@@ -6,6 +6,11 @@ const channelCreateSchema = yup.object().shape({
   channelDescription: yup.string().required("Channel description is required"),
 });
 
+const channelInviteSchema = yup.object().shape({
+  emails: yup.array().of(yup.string()),
+});
+
 module.exports = {
   channelCreateSchema,
+  channelInviteSchema,
 };

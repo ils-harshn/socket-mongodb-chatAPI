@@ -1,4 +1,7 @@
-const { channelCreateSchema } = require("../formSchemas/channelFormSchemas");
+const {
+  channelCreateSchema,
+  channelInviteSchema,
+} = require("../formSchemas/channelFormSchemas");
 const Channel = require("../models/Channel");
 const MemberRoles = require("../models/Consts/MemberRoles");
 const SpaceMemberRoles = require("../models/Consts/SpaceMemberRoles");
@@ -72,6 +75,18 @@ const channelController = {
         error,
       });
     }
+  },
+  invite: async (req, res) => {
+    try {
+      const channelId = req.params.channelId;
+      await channelInviteSchema.validate(req.body);
+      const { emails: body_emails } = req.body;
+      const emails = [...new Set(body_emails)];
+      res.json({
+        channelId,
+        emails,
+      });
+    } catch (error) {}
   },
 };
 
