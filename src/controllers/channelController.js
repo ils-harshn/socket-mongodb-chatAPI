@@ -5,9 +5,11 @@ const {
 const Channel = require("../models/Channel");
 const MemberRoles = require("../models/Consts/MemberRoles");
 const SpaceMemberRoles = require("../models/Consts/SpaceMemberRoles");
+const Invitation = require("../models/Invitation");
 const Member = require("../models/Members");
 const Space = require("../models/Space");
 const SpaceMember = require("../models/SpaceMember");
+const emailService = require("../transporter/emailService");
 
 const channelController = {
   create: async (req, res) => {
@@ -79,14 +81,51 @@ const channelController = {
   invite: async (req, res) => {
     try {
       const channelId = req.params.channelId;
-      await channelInviteSchema.validate(req.body);
-      const { emails: body_emails } = req.body;
-      const emails = [...new Set(body_emails)];
-      res.json({
-        channelId,
-        emails,
-      });
-    } catch (error) {}
+
+      const channel = await Channel.findById(channelId);
+
+      if (channel) {
+        await channelInviteSchema.validate(req.body);
+        const { emails: body_emails } = req.body;
+        const emails = [...new Set(body_emails)];
+
+        const invitations = [];
+
+        await Promise.all(
+          emails.map(async (email) => {
+            await Invitation.findOneAndDelete({
+              email,
+              channel: channelId,
+            });
+
+            const invitation = new Invitation({
+              email,
+              channel: channelId,
+            });
+            await invitation.save();
+            invitations.push(email);
+          })
+        );
+
+        const data = {
+          emails: invitations,
+          channel: channel,
+        };
+
+        await emailService.sendChannelInvitationNotification(data);
+
+        res.json({
+          message: "Invitations sent successfully",
+        });
+      } else {
+        res.status(404).json({
+          message: "Channel Not Found",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Something went wrong" });
+    }
   },
 };
 
