@@ -85,7 +85,7 @@ const channelController = {
 
       const channel = await Channel.findById(channelId);
 
-      if (req.user._id !== channel.adminId) {
+      if (!req.user._id.equals(channel.adminId)) {
         res.status(403).json({
           message: "This user is not admin",
         });
