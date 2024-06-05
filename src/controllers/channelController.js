@@ -1,6 +1,7 @@
 const {
   channelCreateSchema,
   channelInviteSchema,
+  channelAcceptInviteSchema,
 } = require("../formSchemas/channelFormSchemas");
 const Channel = require("../models/Channel");
 const MemberRoles = require("../models/Consts/MemberRoles");
@@ -123,7 +124,45 @@ const channelController = {
         });
       }
     } catch (error) {
-      console.error(error);
+      res.status(500).json({ error: "Something went wrong" });
+    }
+  },
+  acceptChannelInvitation: async (req, res) => {
+    try {
+      await channelAcceptInviteSchema.validate(req.body);
+      const { invitationId } = req.body;
+      const invite = await Invitation.findById(invitationId);
+      if (req.user.email === invite?.email) {
+        const is_member = await Member.findOne({
+          channel: invite.channel,
+          user: req.user._id,
+        });
+        if (is_member) {
+          await Invitation.findByIdAndDelete(invitationId);
+          res.status(403).json({
+            message: "No Invitation Found",
+          });
+        } else {
+          const newMember = new Member({
+            memberName: `${req.user.firstName} ${req.user.lastName}`,
+            channel: invite.channel,
+            user: req.user._id,
+            role: MemberRoles.MEMBER,
+          });
+
+          await newMember.save();
+          await Invitation.findByIdAndDelete(invitationId);
+          res.json({
+            channelId: invite.channel._id,
+            message: "Invite Accepted",
+          });
+        }
+      } else {
+        res.status(403).json({
+          message: "No Invitation Found",
+        });
+      }
+    } catch (error) {
       res.status(500).json({ error: "Something went wrong" });
     }
   },

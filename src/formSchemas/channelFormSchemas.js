@@ -10,7 +10,12 @@ const channelInviteSchema = yup.object().shape({
   emails: yup.array().of(yup.string()),
 });
 
+const channelAcceptInviteSchema = yup.object().shape({
+  invitationId: yup.string().required("Invitation Id is required"),
+});
+
 module.exports = {
   channelCreateSchema,
   channelInviteSchema,
+  channelAcceptInviteSchema,
 };
