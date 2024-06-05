@@ -14,6 +14,10 @@ const channelSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    general: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Space",
+    },
     adminName: {
       type: String,
       required: true,

@@ -43,6 +43,8 @@ const channelController = {
 
       await general.save();
 
+      savedChannel.general = general._id;
+      await savedChannel.save();
       const spaceMember = await SpaceMember({
         space: general._id,
         member: newMember._id,
@@ -139,6 +141,9 @@ const channelController = {
       await channelAcceptInviteSchema.validate(req.body);
       const { invitationId } = req.body;
       const invite = await Invitation.findById(invitationId);
+
+      const user_name = `${req.user.firstName} ${req.user.lastName}`;
+
       if (req.user.email === invite?.email) {
         const is_member = await Member.findOne({
           channel: invite.channel,
@@ -151,11 +156,21 @@ const channelController = {
           });
         } else {
           const newMember = new Member({
-            memberName: `${req.user.firstName} ${req.user.lastName}`,
+            memberName: user_name,
             channel: invite.channel,
             user: req.user._id,
             role: MemberRoles.MEMBER,
           });
+
+          const channel = await Channel.findById(invite.channel);
+
+          const newSpaceMember = new SpaceMember({
+            space: channel.general,
+            member: req.user._id,
+            role: SpaceMemberRoles.MEMBER,
+          });
+
+          await newSpaceMember.save();
 
           await newMember.save();
           await Invitation.findByIdAndDelete(invitationId);
