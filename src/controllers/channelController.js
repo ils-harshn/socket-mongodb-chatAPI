@@ -102,17 +102,17 @@ const channelController = {
               email,
               channel: channelId,
             });
-            await invitation.save();
-            invitations.push(email);
+            const newinvitation = await invitation.save();
+            invitations.push({ email, invitation: newinvitation });
           })
         );
 
         const data = {
-          emails: invitations,
+          invitations: invitations,
           channel: channel,
         };
 
-        await emailService.sendChannelInvitationNotification(data);
+        emailService.sendChannelInvitationNotification(data);
 
         res.json({
           message: "Invitations sent successfully",

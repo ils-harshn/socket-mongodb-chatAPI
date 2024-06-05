@@ -57,17 +57,22 @@ const emailService = {
     return transporter.sendMail(mailOptions);
   },
   sendChannelInvitationNotification: (data) => {
-    const mailOptions = {
-      from: serverConfig.EMAIL,
-      to: data.emails.join(","),
-      subject: `Invitation for the ${data.channel.name} (TEST CHAT APP)`,
-      html: `
-        <h1>Click the link below to join</h1>
-        <a href="${serverConfig.FRONTEND_BASE_URL}/channel/accept-invitation/${data.channel._id}">Accept Invitation</a>
-        <p>This invitaion is from ${data.channel.name} by admin: ${data.channel.adminName}</p>
-      `,
-    };
-    return transporter.sendMail(mailOptions);
+    const promises = data.invitations.map((invite) => {
+      const mailOptions = {
+        from: serverConfig.EMAIL,
+        to: invite.email,
+        subject: `Invitation for the ${data.channel.name} (TEST CHAT APP)`,
+        html: `
+          <h1>Click the link below to join</h1>
+          <a href="${serverConfig.FRONTEND_BASE_URL}/channel/accept-invitation/${invite.invitation._id}">Accept Invitation</a>
+          <p>This invitaion is from ${data.channel.name} by admin: ${data.channel.adminName}</p>
+        `,
+      };
+
+      return transporter.sendMail(mailOptions);
+    });
+
+    return Promise.all(promises);
   },
 };
 
