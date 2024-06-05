@@ -85,6 +85,13 @@ const channelController = {
 
       const channel = await Channel.findById(channelId);
 
+      if (req.user._id !== channel.adminId) {
+        res.status(403).json({
+          message: "This user is not admin",
+        });
+        return;
+      }
+
       if (channel) {
         await channelInviteSchema.validate(req.body);
         const { emails: body_emails } = req.body;
