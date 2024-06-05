@@ -1,4 +1,5 @@
 const authChannelMiddleware = require("../middlewares/socket/authChannelMiddleware");
+const spaceHandler = require("./handlers/spaceHandler");
 
 function initChannelSocket(io) {
   const dynamicNamespace = io
@@ -12,6 +13,8 @@ function initChannelSocket(io) {
         },
         channel: socket.channel,
       });
+
+      spaceHandler(dynamicNamespace, socket);
     });
 }
 

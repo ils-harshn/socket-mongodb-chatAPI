@@ -33,6 +33,7 @@ const authChannelMiddleware = async (socket, next) => {
           if (member) {
             socket.user = {
               _id: user._id,
+              member: member,
               email: user.email,
               name: member.memberName,
               role: member.role,
