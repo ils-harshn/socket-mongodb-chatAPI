@@ -1,4 +1,5 @@
 const SpaceMember = require("../../models/SpaceMember");
+const CHANNEL_SOCKET_EVENTS = require("../eventTypes/channelSocketEvents.type");
 
 const spaceHandler = (io, socket) => {
   const list = async () => {
@@ -8,14 +9,16 @@ const spaceHandler = (io, socket) => {
       })
         .populate("space")
         .sort({ createdAt: -1 });
-      socket.emit("space:list", memberSpaces);
+
+      console.log(socket.user.member._id);
+      socket.emit(CHANNEL_SOCKET_EVENTS.RES_SPACE_LIST, memberSpaces);
     } catch (error) {
       console.log(error);
-      socket.emit("space:list", []);
+      socket.emit(CHANNEL_SOCKET_EVENTS.RES_SPACE_LIST, []);
     }
   };
 
-  socket.on("space:req:list", list);
+  socket.on(CHANNEL_SOCKET_EVENTS.REQ_SPACE_LIST, list);
 };
 
 module.exports = spaceHandler;

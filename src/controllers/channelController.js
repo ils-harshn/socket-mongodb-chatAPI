@@ -164,15 +164,16 @@ const channelController = {
 
           const channel = await Channel.findById(invite.channel);
 
+          await newMember.save();
+
           const newSpaceMember = new SpaceMember({
             space: channel.general,
-            member: req.user._id,
+            member: newMember._id,
             role: SpaceMemberRoles.MEMBER,
           });
 
           await newSpaceMember.save();
 
-          await newMember.save();
           await Invitation.findByIdAndDelete(invitationId);
           res.json({
             channelId: invite.channel._id,
