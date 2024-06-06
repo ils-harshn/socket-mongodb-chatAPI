@@ -9,8 +9,6 @@ const spaceHandler = (io, socket) => {
       })
         .populate("space")
         .sort({ createdAt: -1 });
-
-      console.log(socket.user.member._id);
       socket.emit(CHANNEL_SOCKET_EVENTS.RES_SPACE_LIST, memberSpaces);
     } catch (error) {
       console.log(error);

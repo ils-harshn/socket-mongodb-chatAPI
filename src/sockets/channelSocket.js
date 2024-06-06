@@ -16,6 +16,18 @@ function initChannelSocket(io) {
       });
 
       spaceHandler(dynamicNamespace, socket);
+
+      socket.broadcast.emit(
+        CHANNEL_SOCKET_EVENTS.LOGGER,
+        `User Connected ${socket.user.email}`
+      );
+
+      socket.on(CHANNEL_SOCKET_EVENTS.DISCONNECT, () => {
+        socket.broadcast.emit(
+          CHANNEL_SOCKET_EVENTS.LOGGER,
+          `User Disconnected ${socket.user.email}`
+        );
+      });
     });
 }
 
