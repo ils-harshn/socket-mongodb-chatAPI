@@ -9,6 +9,7 @@ const channelMemberController = {
       const members = await Member.find({
         user: { $ne: req.user._id },
         memberName: new RegExp(query.name, "i"),
+        channel: req.channel._id,
       }).select("memberName role");
       res.json(members);
     } catch (err) {
