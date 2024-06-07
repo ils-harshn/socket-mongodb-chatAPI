@@ -3,6 +3,8 @@ const User = require("../models/User");
 const { verifyUserTokenSchema } = require("../formSchemas/authSchemas");
 const Token = require("../models/Token");
 const { decryptUserId } = require("../helpers");
+const Channel = require("../models/Channel");
+const Member = require("../models/Members");
 
 const authMiddleware = {
   isLoggedIn: async (req, res, next) => {
@@ -32,6 +34,27 @@ const authMiddleware = {
       }
     } catch (error) {
       res.status(404).json({ status: "error", message: "Invalid request" });
+    }
+  },
+  isMemberOfChannel: async (req, res, next) => {
+    try {
+      const { channelId } = req.params;
+      const member = await Member.findOne({
+        user: req.user._id,
+        channel: channelId,
+      });
+
+      if (member) {
+        const channel = await Channel.findById(channelId);
+        req.channel = channel;
+        next();
+      } else {
+        res.status(404).json({
+          message: "You are not member of this channel",
+        });
+      }
+    } catch (err) {
+      res.status(500).json({ message: "Something Went Wrong!" });
     }
   },
 };

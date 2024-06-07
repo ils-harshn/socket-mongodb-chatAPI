@@ -11,7 +11,6 @@ const spaceHandler = (io, socket) => {
         .sort({ createdAt: -1 });
       socket.emit(CHANNEL_SOCKET_EVENTS.RES_SPACE_LIST, memberSpaces);
     } catch (error) {
-      console.log(error);
       socket.emit(CHANNEL_SOCKET_EVENTS.RES_SPACE_LIST, []);
     }
   };
