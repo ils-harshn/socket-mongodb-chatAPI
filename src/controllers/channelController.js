@@ -35,7 +35,7 @@ const channelController = {
       await newMember.save();
 
       const general = await Space({
-        name: "general",
+        name: "General",
         description: channelDescription,
         channel: newChannel._id,
         adminId: req.user._id,
