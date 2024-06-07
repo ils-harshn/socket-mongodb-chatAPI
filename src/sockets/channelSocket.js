@@ -1,5 +1,6 @@
 const authChannelMiddleware = require("../middlewares/socket/authChannelMiddleware");
 const CHANNEL_SOCKET_EVENTS = require("./eventTypes/channelSocketEvents.type");
+const conversationHandler = require("./handlers/conversationHandler");
 const spaceHandler = require("./handlers/spaceHandler");
 
 function initChannelSocket(io) {
@@ -16,6 +17,7 @@ function initChannelSocket(io) {
       });
 
       spaceHandler(dynamicNamespace, socket);
+      conversationHandler(dynamicNamespace, socket);
 
       socket.broadcast.emit(
         CHANNEL_SOCKET_EVENTS.LOGGER,
@@ -28,6 +30,8 @@ function initChannelSocket(io) {
           `User Disconnected ${socket.user.email}`
         );
       });
+
+      socket.join(socket.user.member._id.toString());
     });
 }
 
