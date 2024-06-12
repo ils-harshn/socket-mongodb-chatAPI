@@ -30,9 +30,16 @@ const generateToken = (userId) => {
   return token;
 };
 
+const getPeerMemberIds = (id1, id2) => {
+  const ids = [id1.toString(), id2.toString()];
+  ids.sort();
+  return ids;
+};
+
 module.exports = {
   generateOTP,
   encryptUserId,
   decryptUserId,
   generateToken,
+  getPeerMemberIds,
 };

@@ -1,4 +1,6 @@
+const { getPeerMemberIds } = require("../../helpers");
 const Conversation = require("../../models/Conversation");
+const PeerConnection = require("../../models/PeerConnection");
 const CHANNEL_SOCKET_EVENTS = require("../eventTypes/channelSocketEvents.type");
 
 const conversationHandler = (io, socket) => {
@@ -20,6 +22,19 @@ const conversationHandler = (io, socket) => {
       });
 
       await conversation.save();
+
+      if (!conversation.peer) {
+        const ids = getPeerMemberIds(socket.user.member._id, data._id);
+        const newPeerConnection = new PeerConnection({
+          member_1: ids[0],
+          member_2: ids[1],
+        });
+
+        await newPeerConnection.save();
+
+        conversation.peer = newPeerConnection._id;
+        conversation.save();
+      }
       socket.emit(CHANNEL_SOCKET_EVENTS.RES_CREATE_CONVERSATION, {
         conversation,
         member: data,

@@ -11,6 +11,10 @@ const conversationSchema = new mongoose.Schema({
     ref: "Member",
     required: true,
   },
+  peer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "PeerConnection",
+  },
   lastUpdate: {
     type: Date,
     default: Date.now,
