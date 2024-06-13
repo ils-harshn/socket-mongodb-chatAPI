@@ -25,15 +25,26 @@ const conversationHandler = (io, socket) => {
 
       if (!conversation.peer) {
         const ids = getPeerMemberIds(socket.user.member._id, data._id);
-        const newPeerConnection = new PeerConnection({
+
+        const existsingPeerConnection = await PeerConnection.findOne({
           member_1: ids[0],
           member_2: ids[1],
         });
 
-        await newPeerConnection.save();
+        if (existsingPeerConnection) {
+          conversation.peer = existsingPeerConnection._id;
+          conversation.save();
+        } else {
+          const newPeerConnection = new PeerConnection({
+            member_1: ids[0],
+            member_2: ids[1],
+          });
 
-        conversation.peer = newPeerConnection._id;
-        conversation.save();
+          await newPeerConnection.save();
+
+          conversation.peer = newPeerConnection._id;
+          conversation.save();
+        }
       }
       socket.emit(CHANNEL_SOCKET_EVENTS.RES_CREATE_CONVERSATION, {
         conversation,
