@@ -4,9 +4,11 @@ const CHANNEL_SOCKET_EVENTS = {
   DISCONNECT: "disconnect",
 
   // catches
-
+  SEND_DM: "SEND_DM",
+  
   // emits
   CONNECTED: "CONNECTED",
+  RECEIVE_DM: "RECEIVE_DM",
 
   // req - res
   REQ_SPACE_LIST: "REQ_SPACE_LIST",

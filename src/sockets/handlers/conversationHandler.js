@@ -71,8 +71,17 @@ const conversationHandler = (io, socket) => {
     );
   };
 
+  const sendDm = async (data) => {
+    socket.to(data.to.toString()).emit(CHANNEL_SOCKET_EVENTS.RECEIVE_DM, {
+      of: data.of,
+      from: socket.user.member._id,
+      content: data.content,
+    });
+  };
+
   socket.on(CHANNEL_SOCKET_EVENTS.REQ_CREATE_CONVERSATION, create);
   socket.on(CHANNEL_SOCKET_EVENTS.REQ_CONVERSATION_LIST, get);
+  socket.on(CHANNEL_SOCKET_EVENTS.SEND_DM, sendDm);
 };
 
 module.exports = conversationHandler;
